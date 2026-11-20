@@ -1,0 +1,72 @@
+# ============================================================================
+# EDGE LICENSE CENTER by AMIRBTC — Cloudflare Worker Path B-1 Configuration
+# Approved Architecture: Path B-1 (Cloudflare D1 Primary DB + Worker Backend + R2 Encrypted Backups)
+#
+# CRITICAL SAFETY RULES:
+# - NEVER place real secrets, bot tokens, RSA private keys, or live credentials here.
+# - Staging uses isolated D1/R2 resources and DRY_RUN safety flags.
+# - Production cutover requires explicit owner approval and separate prod bindings.
+# ============================================================================
+
+name = "edge-license-center-worker"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+[triggers]
+crons = ["0 0 * * *"]
+
+[vars]
+ENVIRONMENT = "development"
+GATEWAY_PHASE = "PHASE_1_6_PATH_B1_STAGING"
+PAYMENT_VERIFICATION_MODE = "DRY_RUN"
+LICENSE_ISSUANCE_MODE = "DRY_RUN"
+TELEGRAM_BOT_SEND_ENABLED = "false"
+POLYGON_RPC_URL = "https://polygon-rpc.com"
+POLYGON_MIN_CONFIRMATIONS = "30"
+RSA_KEY_ID = "edge-rsa-v1"
+RATE_LIMIT_MAX_PER_MIN = "60"
+TELEGRAM_INIT_DATA_MAX_AGE_SECONDS = "300"
+SESSION_TTL_SECONDS = "900"
+BACKUP_RETENTION_DAYS = "30"
+ALLOW_PHASE0_PREVIEW_SESSION = "false"
+
+# ============================================================================
+# Isolated Staging Environment (DRY_RUN + Isolated D1 & R2)
+# Deploy via:
+#   wrangler d1 migrations apply edge_license_staging --env staging --remote
+#   wrangler deploy --env staging
+# Configure Staging secrets ONLY via Wrangler CLI:
+#   wrangler secret put TELEGRAM_BOT_TOKEN --env staging
+#   wrangler secret put TELEGRAM_WEBHOOK_SECRET --env staging
+#   wrangler secret put SESSION_SECRET --env staging
+#   wrangler secret put RSA_PRIVATE_KEY_PEM --env staging
+#   wrangler secret put RSA_PUBLIC_KEY_PEM --env staging
+#   wrangler secret put BACKUP_RSA_PUBLIC_KEY_PEM --env staging
+# ============================================================================
+[env.staging]
+name = "edge-license-center-staging"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+GATEWAY_PHASE = "PHASE_1_6_PATH_B1_STAGING"
+PAYMENT_VERIFICATION_MODE = "DRY_RUN"
+LICENSE_ISSUANCE_MODE = "DRY_RUN"
+TELEGRAM_BOT_SEND_ENABLED = "false"
+POLYGON_RPC_URL = "https://polygon-rpc.com"
+POLYGON_MIN_CONFIRMATIONS = "30"
+RSA_KEY_ID = "edge-rsa-staging-v1"
+RATE_LIMIT_MAX_PER_MIN = "60"
+TELEGRAM_INIT_DATA_MAX_AGE_SECONDS = "300"
+SESSION_TTL_SECONDS = "900"
+BACKUP_RETENTION_DAYS = "30"
+ALLOW_PHASE0_PREVIEW_SESSION = "false"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "edge_license_staging"
+database_id = "REPLACE_WITH_STAGING_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[env.staging.r2_buckets]]
+binding = "BACKUP_BUCKET"
+bucket_name = "edge-license-backups-staging"

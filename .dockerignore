@@ -1,0 +1,27 @@
+# ============================================================================
+# EDGE LICENSE CENTER — Docker Build Context Exclusions
+# Prevents secrets, local SQLite databases, keys, and build artifacts from
+# ever entering any Docker image layer or build context.
+# ============================================================================
+.git
+.gitignore
+node_modules
+dist
+dist-server
+coverage
+data
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.log
+.DS_Store
+tests
+docs

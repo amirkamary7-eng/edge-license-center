@@ -1,0 +1,25 @@
+# ============================================================================
+# EDGE LICENSE CENTER by AMIRBTC — Caddy Reverse Proxy (Automatic HTTPS)
+# Replace staging.edge-license.example.com with your real Staging/Prod domain.
+# ============================================================================
+
+staging.edge-license.example.com {
+  encode zstd gzip
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    -Server
+  }
+
+  # Block direct public exposure of internal files
+  @blocked path /.git* /.env* /data/*
+  respond @blocked 404
+
+  reverse_proxy 127.0.0.1:3000 {
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+}

@@ -1,0 +1,27 @@
+# ============================================================================
+# EDGE LICENSE CENTER by AMIRBTC — systemd Service Template (Ubuntu / Debian)
+# Store real secrets ONLY in /etc/edge-license-center/env (chmod 600 root:edge)
+# ============================================================================
+
+[Unit]
+Description=EDGE LICENSE CENTER by AMIRBTC Backend & Mini App
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge-license-center
+EnvironmentFile=/etc/edge-license-center/env
+ExecStart=/usr/bin/node /opt/edge-license-center/dist-server/server.mjs
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/edge-license-center
+
+[Install]
+WantedBy=multi-user.target

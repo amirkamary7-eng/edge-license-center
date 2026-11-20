@@ -1,0 +1,6 @@
+{
+  "name": "EDGE LICENSE CENTER by AMIRBTC",
+  "description": "Commercial Telegram Mini App, Bot, Payment Verification, RSA License Engine, and RBAC Admin Panel for EDGE by AMIRBTC on Polygon PoS (Native USDC).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
